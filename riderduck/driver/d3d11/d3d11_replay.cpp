@@ -282,6 +282,7 @@ void D3D11Replay::CreateResources()
 
 void D3D11Replay::DestroyResources()
 {
+  ReleaseReplayOverrides();
   SAFE_RELEASE(m_CustomShaderTex);
 
   m_General.Release();

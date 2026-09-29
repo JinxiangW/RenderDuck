@@ -120,6 +120,9 @@ public:
   void ExportCapture(const CaptureFileFormat &fmt, const rdcstr &exportfile) override;
   void SetEventID(const rdcarray<ICaptureViewer *> &exclude, uint32_t selectedEventID,
                   uint32_t eventId, bool force = false) override;
+  // Called on the UI thread after the camera worker has already replayed/fetched this event.
+  void CameraReplayEventReady(uint32_t eventId, const D3D11Pipe::State *d3d11,
+                              const PipeState *pipeline);
   void SetRemoteHost(int hostIndex);
   void RefreshStatus() override { SetEventID({}, m_SelectedEventID, m_EventID, true); }
   bool IsResourceReplaced(ResourceId id) override;

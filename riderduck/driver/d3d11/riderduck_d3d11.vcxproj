@@ -47,6 +47,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <IntDir>$(SolutionDir)$(Platform)\$(Configuration)\obj\$(ProjectName)\</IntDir>
+    <RiderDuckDiagShaderMetadataDefault Condition="'$(RiderDuckDiagShaderMetadataDefault)' == ''">0</RiderDuckDiagShaderMetadataDefault>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Platform)'=='x64'">
     <ClCompile>
@@ -122,10 +123,15 @@
     <ClCompile Include="d3d11_device3_wrap.cpp" />
     <ClCompile Include="d3d11_device_wrap.cpp" />
     <ClCompile Include="d3d11_hooks.cpp" />
+    <ClCompile Include="d3d11_metadata.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PreprocessorDefinitions>RIDERDUCK_DIAG_SHADER_METADATA_DEFAULT=$(RiderDuckDiagShaderMetadataDefault);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
     <ClCompile Include="d3d11_initstate.cpp" />
     <ClCompile Include="d3d11_manager.cpp" />
     <ClCompile Include="d3d11_renderstate.cpp" />
     <ClCompile Include="d3d11_replay.cpp" />
+    <ClCompile Include="d3d11_replay_overrides.cpp" />
     <ClCompile Include="d3d11_resources.cpp" />
     <ClCompile Include="d3d11_shader_cache.cpp" />
     <ClCompile Include="d3d11_shaderdebug.cpp" />
@@ -142,6 +148,7 @@
     <ClInclude Include="d3d11_debug.h" />
     <ClInclude Include="d3d11_device.h" />
     <ClInclude Include="d3d11_hooks.h" />
+    <ClInclude Include="d3d11_metadata.h" />
     <ClInclude Include="d3d11_manager.h" />
     <ClInclude Include="d3d11_renderstate.h" />
     <ClInclude Include="d3d11_rendertext.h" />

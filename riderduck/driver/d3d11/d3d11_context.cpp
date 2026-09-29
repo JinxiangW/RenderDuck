@@ -760,6 +760,16 @@ bool WrappedID3D11DeviceContext::ProcessChunk(ReadSerialiser &ser, D3D11Chunk ch
 
   m_AddedAction = false;
 
+  // Keep deserialisation and event accounting intact. Only GPU work is overridden.
+  struct OverrideEventScope
+  {
+    D3D11Replay *replay;
+    uint32_t eventId;
+    ~OverrideEventScope() { if(replay) replay->EndReplayOverrideEvent(eventId); }
+  } overrideScope = {IsActiveReplaying(m_State) ? m_pDevice->GetReplay() : NULL, m_CurEventID};
+  if(overrideScope.replay)
+    overrideScope.replay->BeginReplayOverrideEvent(m_CurEventID, chunk);
+
   bool ret = false;
 
   switch(chunk)

@@ -191,6 +191,7 @@ SOURCES += Code/qriderduck.cpp \
     Windows/MainWindow.cpp \
     Windows/EventBrowser.cpp \
     Windows/TextureViewer.cpp \
+    Code/ReplayOverrides.cpp \
     Windows/ShaderViewer.cpp \
     Windows/ShaderMessageViewer.cpp \
     Windows/DescriptorViewer.cpp \

@@ -24,6 +24,7 @@
  ******************************************************************************/
 
 #include "d3d11_context.h"
+#include "d3d11_replay.h"
 #include "strings/string_utils.h"
 #include "d3d11_debug.h"
 #include "d3d11_renderstate.h"
@@ -421,6 +422,9 @@ bool WrappedID3D11DeviceContext::Serialise_CopySubresourceRegion1(
 
   SERIALISE_CHECK_READ_ERRORS();
 
+  if(IsActiveReplaying(m_State) && m_pDevice->GetReplay()->IsReplayEventSkipped(m_CurEventID))
+    return true;
+
   if(IsReplayingAndReading() && pDstResource && pSrcResource)
   {
     if(m_pRealContext1)
@@ -542,6 +546,9 @@ bool WrappedID3D11DeviceContext::Serialise_ClearView(SerialiserType &ser, ID3D11
   Serialise_DebugMessages(ser);
 
   SERIALISE_CHECK_READ_ERRORS();
+
+  if(IsActiveReplaying(m_State) && m_pDevice->GetReplay()->IsReplayEventSkipped(m_CurEventID))
+    return true;
 
   if(ser.IsReading())
   {
@@ -1811,6 +1818,9 @@ bool WrappedID3D11DeviceContext::Serialise_DiscardResource(SerialiserType &ser,
 
   SERIALISE_CHECK_READ_ERRORS();
 
+  if(IsActiveReplaying(m_State) && m_pDevice->GetReplay()->IsReplayEventSkipped(m_CurEventID))
+    return true;
+
   if(IsReplayingAndReading())
   {
     if(m_pDevice->GetReplayOptions().optimisation != ReplayOptimisationLevel::Fastest)
@@ -1896,6 +1906,9 @@ bool WrappedID3D11DeviceContext::Serialise_DiscardView(SerialiserType &ser, ID3D
   Serialise_DebugMessages(ser);
 
   SERIALISE_CHECK_READ_ERRORS();
+
+  if(IsActiveReplaying(m_State) && m_pDevice->GetReplay()->IsReplayEventSkipped(m_CurEventID))
+    return true;
 
   if(IsReplayingAndReading())
   {
@@ -2028,6 +2041,9 @@ bool WrappedID3D11DeviceContext::Serialise_DiscardView1(SerialiserType &ser,
   Serialise_DebugMessages(ser);
 
   SERIALISE_CHECK_READ_ERRORS();
+
+  if(IsActiveReplaying(m_State) && m_pDevice->GetReplay()->IsReplayEventSkipped(m_CurEventID))
+    return true;
 
   if(IsReplayingAndReading())
   {

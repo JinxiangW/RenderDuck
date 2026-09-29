@@ -28,6 +28,7 @@
 #include "driver/shaders/dxbc/dxbc_container.h"
 #include "d3d11_device.h"
 #include "d3d11_manager.h"
+#include "d3d11_metadata.h"
 
 D3D11ResourceType IdentifyTypeByPtr(IUnknown *ptr);
 template <typename T>
@@ -369,6 +370,12 @@ public:
 
     if(guid == WKPDID_D3DDebugObjectName)
     {
+      if(D3D11Metadata::Enabled() && !RiderDuck::Inst().IsReplayApp() && IdentifyTypeByPtr(this) == Resource_Buffer)
+      {
+        rdcstr name = pData ? rdcstr((const char *)pData, DataSize) : rdcstr();
+        while(!name.empty() && name.back() == '\0') name.pop_back();
+        D3D11Metadata::BufferName(GetResourceID(), name, "narrow", false);
+      }
       const char *pStrData = (const char *)pData;
       if(DataSize != 0 && pStrData[DataSize - 1] != '\0')
       {
@@ -382,6 +389,12 @@ public:
     }
     else if(guid == WKPDID_D3DDebugObjectNameW)
     {
+      if(D3D11Metadata::Enabled() && !RiderDuck::Inst().IsReplayApp() && IdentifyTypeByPtr(this) == Resource_Buffer)
+      {
+        rdcstr name = pData ? StringFormat::Wide2UTF8(rdcwstr((const wchar_t *)pData, DataSize / 2)) : rdcstr();
+        while(!name.empty() && name.back() == '\0') name.pop_back();
+        D3D11Metadata::BufferName(GetResourceID(), name, "wide", false);
+      }
       const wchar_t *pStrData = (const wchar_t *)pData;
       rdcwstr wName(pStrData, DataSize / 2);
       rdcstr sName = StringFormat::Wide2UTF8(wName);

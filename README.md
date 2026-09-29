@@ -6,6 +6,10 @@ RenderDuck is a customized fork of RenderDoc, using inline Detour to enhance API
 
 Guide&Overview: [A customized RDC branch enhanced with Detour-based injection.](https://www.floraison.io/2026/09/15/)
 
+Local D3D11 replay: [Free camera, automatic configuration and pass bypass](docs/how/how_replay_overrides.rst), with [regression tests](util/test/replay_overrides/README.md) and [game profiles](docs/freecamera-profiles/README.md).
+
+Missing shader/constant-buffer names: [optional D3D11 capture metadata diagnostics](docs/how/how_shader_metadata_diagnostics.rst).
+
 "Oopsie, I slipped! (＞﹏＜)"
 
 ****

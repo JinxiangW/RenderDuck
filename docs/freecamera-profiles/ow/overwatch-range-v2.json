@@ -1,0 +1,87 @@
+{
+  "version": 2,
+  "name": "Overwatch D3D11 verified camera layout",
+  "row_major": true,
+  "row_vector": true,
+  "forward": "+Z",
+  "camera": {
+    "view": {
+      "slot": 9,
+      "offset": 64
+    },
+    "inverse_view": {
+      "slot": 9,
+      "offset": 128
+    },
+    "projection": {
+      "slot": 9,
+      "offset": 320
+    }
+  },
+  "layouts": [
+    {
+      "slot": 9,
+      "stages": [
+        "VS",
+        "HS",
+        "DS",
+        "GS",
+        "PS",
+        "CS"
+      ],
+      "fields": [
+        {
+          "semantic": "View",
+          "offset": 64
+        },
+        {
+          "semantic": "InverseView",
+          "offset": 128
+        }
+      ]
+    },
+    {
+      "slot": 7,
+      "stages": [
+        "VS"
+      ],
+      "fields": [
+        {
+          "semantic": "ModelView",
+          "offset": 0,
+          "model_offset": 192
+        }
+      ]
+    }
+  ],
+  "unresolved": [
+    "Only verified View, InverseView and per-object ModelView are covered. Other camera/history fields, shadows and screen-space effects remain unclassified.",
+    "Temporal reconstruction and its sharpening are replaced by bilinear scaling. Auxiliary history outputs are not rebuilt; this recipe is for this single captured frame."
+  ],
+  "reference_event": 2043,
+  "capture": {
+    "size": 888160593,
+    "sha256": "955894e95ebbd306d7b6dfddc1fb96116ecfb076f2787f39883ea1f18b34d179"
+  },
+  "passes": [
+    {
+      "first_event": 4799,
+      "last_event": 4811,
+      "mode": "colour_bypass",
+      "reason": "EID 4799 reprojects history 1773 using offsets 1757 and combines current colour; EID 4811 filters its output. Copy pre-temporal scene colour 1842 to 153044 with bilinear 2560x1440 -> 3840x2160; retain tone mapping 4828 and UI.",
+      "colours": [
+        {
+          "source": "ResourceId::1842",
+          "destination": "ResourceId::153044",
+          "source_mip": 0,
+          "source_slice": 0,
+          "source_format": 10,
+          "destination_mip": 0,
+          "destination_slice": 0,
+          "destination_format": 10
+        }
+      ]
+    }
+  ],
+  "world_up": "+Y"
+}

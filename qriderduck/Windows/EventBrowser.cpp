@@ -45,6 +45,7 @@
 #include <QTimer>
 #include "Code/QRDUtils.h"
 #include "Code/Resources.h"
+#include "Code/ReplayOverrides.h"
 #include "Widgets/CollapseGroupBox.h"
 #include "Widgets/Extended/RDHeaderView.h"
 #include "Widgets/Extended/RDLabel.h"
@@ -871,7 +872,12 @@ struct EventItemModel : public QAbstractItemModel
 
         switch(index.column())
         {
-          case COL_NAME: return GetCachedEIDName(eid);
+          case COL_NAME:
+            {
+              QString label = ReplayOverrides::PassLabel(m_Ctx, eid);
+              return label.isEmpty() ? GetCachedEIDName(eid)
+                                     : QVariant(label + RichResourceTextFormat(m_Ctx, GetCachedEIDName(eid)));
+            }
           case COL_EID:
           case COL_ACTION:
             if(action->eventId == eid && !action->children.empty())
@@ -5642,6 +5648,28 @@ void EventBrowser::events_contextMenu(const QPoint &pos)
   contextMenu.addAction(&collapseAll);
   contextMenu.addAction(&toggleBookmark);
   contextMenu.addAction(&selectCols);
+
+  QAction *passOverride = contextMenu.addAction(tr("Skip / bypass pass..."));
+  passOverride->setEnabled(m_Ctx.IsCaptureLoaded() && m_Ctx.APIProps().pipelineType == GraphicsAPI::D3D11);
+  QObject::connect(passOverride, &QAction::triggered, this, [this, index]() {
+    uint32_t first = index.data(ROLE_SELECTED_EID).toUInt();
+    uint32_t last = index.data(ROLE_EFFECTIVE_EID).toUInt();
+    const ActionDescription *action = m_Ctx.GetAction(first);
+    // Synthetic grouping markers must resolve to real captured child events.
+    if(action && action->IsFakeMarker() && !action->children.empty())
+      first = action->children.front().events.empty() ? action->children.front().eventId
+                                                     : action->children.front().events.front().eventId;
+    m_Ctx.GetTextureViewer();
+    if(ReplayOverrides *editor = ReplayOverrides::Find(m_Ctx))
+      editor->ShowPass(first ? first : m_Ctx.CurSelectedEvent(), last ? last : m_Ctx.CurEvent(), true);
+  });
+  QAction *manageOverrides = contextMenu.addAction(tr("Manage replay overrides..."));
+  manageOverrides->setEnabled(passOverride->isEnabled());
+  QObject::connect(manageOverrides, &QAction::triggered, this, [this]() {
+    m_Ctx.GetTextureViewer();
+    if(ReplayOverrides *editor = ReplayOverrides::Find(m_Ctx)) editor->ShowPass(0, 0, false);
+  });
+
 
   expandAll.setIcon(Icons::arrow_out());
   collapseAll.setIcon(Icons::arrow_in());

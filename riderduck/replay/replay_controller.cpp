@@ -2164,6 +2164,99 @@ void ReplayController::ClearReplayCache()
   m_pDevice->ClearReplayCache();
 }
 
+rdcstr ReplayController::SetReplayOverrides(const rdcarray<ReplayConstantOverride> &constants,
+                                           const rdcarray<ReplayPassOverride> &passes,
+                                           uint32_t targetEventId)
+{
+  CHECK_REPLAY_THREAD();
+  if(m_pDevice->IsRemoteProxy())
+    return "Replay overrides require a local D3D11 replay device.";
+  if(targetEventId && !GetActionByEID(targetEventId))
+    return "Replay target event does not exist in this capture.";
+  for(const ReplayConstantOverride &o : constants)
+    // Constant ranges have historically included state-setting events, not only actions.
+    if(o.firstEvent == 0 || o.firstEvent > o.lastEvent || o.lastEvent >= m_Actions.size())
+      return "Constant override event range does not exist in this capture.";
+  for(const ReplayPassOverride &o : passes)
+    if(!GetActionByEID(o.firstEvent) || !GetActionByEID(o.lastEvent))
+      return "Pass override event range does not exist in this capture.";
+  const uint32_t previousEvent = m_EventID;
+  rdcstr error = m_pDevice->SetReplayOverrides(constants, passes);
+  if(!error.empty()) return error;
+  ClearReplayCache();
+  SetFrameEvent(targetEventId ? targetEventId : previousEvent, true);
+  error = m_pDevice->GetReplayOverrideError();
+  if(!error.empty())
+  {
+    rdcstr restore = m_pDevice->SetReplayOverrides(m_ReplayConstants, m_ReplayPasses);
+    if(restore.empty())
+    {
+      ClearReplayCache();
+      SetFrameEvent(previousEvent, true);
+      restore = m_pDevice->GetReplayOverrideError();
+    }
+    if(!restore.empty()) error += "; restoring previous overrides failed: " + restore;
+  }
+  else
+  {
+    m_ReplayConstants = constants;
+    m_ReplayPasses = passes;
+  }
+  for(IReplayOutput *output : m_Outputs) output->Display();
+  return error;
+}
+
+rdcstr ReplayController::SetReplayConstantOverrides(const rdcarray<ReplayConstantOverride> &overrides,
+                                                    uint32_t targetEventId)
+{
+  CHECK_REPLAY_THREAD();
+  if(m_pDevice->IsRemoteProxy())
+    return "Replay overrides require a local D3D11 replay device.";
+  if(targetEventId && !GetActionByEID(targetEventId))
+    return "Camera target event does not exist in this capture.";
+  rdcstr error = m_pDevice->SetReplayConstantOverrides(overrides);
+  if(!error.empty())
+    return error;
+  m_ReplayConstants = overrides;
+  ClearReplayCache();
+  SetFrameEvent(targetEventId ? targetEventId : m_EventID, true);
+  for(IReplayOutput *output : m_Outputs)
+    output->Display();
+  return m_pDevice->GetReplayOverrideError();
+}
+
+rdcstr ReplayController::GetReplayOverrideStats()
+{
+  CHECK_REPLAY_THREAD();
+  return m_pDevice->GetReplayOverrideStats();
+}
+
+rdcstr ReplayController::ClearReplayConstantOverrides()
+{
+  return SetReplayConstantOverrides({});
+}
+
+rdcstr ReplayController::SetReplayPassOverrides(const rdcarray<ReplayPassOverride> &overrides)
+{
+  CHECK_REPLAY_THREAD();
+  if(m_pDevice->IsRemoteProxy())
+    return "Replay overrides require a local D3D11 replay device.";
+  rdcstr error = m_pDevice->SetReplayPassOverrides(overrides);
+  if(!error.empty())
+    return error;
+  m_ReplayPasses = overrides;
+  ClearReplayCache();
+  SetFrameEvent(m_EventID, true);
+  for(IReplayOutput *output : m_Outputs)
+    output->Display();
+  return m_pDevice->GetReplayOverrideError();
+}
+
+rdcstr ReplayController::ClearReplayPassOverrides()
+{
+  return SetReplayPassOverrides({});
+}
+
 void ReplayController::ReloadShaderDebugInformation()
 {
   CHECK_REPLAY_THREAD();

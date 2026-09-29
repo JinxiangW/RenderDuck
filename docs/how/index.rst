@@ -8,6 +8,7 @@ How do I ...?
 	how_filter_events
 	how_debug_shader
 	how_shader_debug_info
+	how_shader_metadata_diagnostics
 	how_inspect_pixel
 	how_buffer_format
 	how_view_texture
@@ -21,3 +22,4 @@ How do I ...?
 	how_rgp_profile
 	how_python_extension
 	how_control_replay
+	how_replay_overrides

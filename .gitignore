@@ -48,3 +48,8 @@ qriderduck/3rdparty/pyside
 .DS_Store
 plugins-*/
 __pycache__
+
+# Local verification output and editor state (not source or test fixtures).
+/artifacts/
+/.codex-artifacts/
+/.idea/

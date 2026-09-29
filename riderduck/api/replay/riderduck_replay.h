@@ -727,6 +727,23 @@ re-initialise any data, including e.g. bindless feedback, printf results or mesh
 )");
   virtual void ClearReplayCache() = 0;
 
+  DOCUMENT("Install constant and pass overrides together and replay targetEventId (0 retains the current event). Local D3D11 only. Validation errors leave both rule sets intact; replay errors restore the previous rules and event.");
+  virtual rdcstr SetReplayOverrides(const rdcarray<ReplayConstantOverride> &constants,
+                                    const rdcarray<ReplayPassOverride> &passes,
+                                    uint32_t targetEventId = 0) = 0;
+
+  DOCUMENT("Set session-only constant overrides and replay targetEventId (0 retains the current event). Local D3D11 only. Returns an empty string on success, or an error; invalid configurations leave existing rules intact.");
+  virtual rdcstr SetReplayConstantOverrides(const rdcarray<ReplayConstantOverride> &overrides,
+                                           uint32_t targetEventId = 0) = 0;
+  DOCUMENT("Return local replay override diagnostics as JSON: rule comparisons, copied bytes, allocations and index rebuilds since the last constant-override application.");
+  virtual rdcstr GetReplayOverrideStats() = 0;
+  DOCUMENT("Remove all constant overrides and replay the current event.");
+  virtual rdcstr ClearReplayConstantOverrides() = 0;
+  DOCUMENT("Set session-only pass skip/colour bypass rules and replay the current event. Local D3D11 only. Returns an empty string on success, or an error; invalid configurations leave existing rules intact.");
+  virtual rdcstr SetReplayPassOverrides(const rdcarray<ReplayPassOverride> &overrides) = 0;
+  DOCUMENT("Remove all pass overrides and replay the current event.");
+  virtual rdcstr ClearReplayPassOverrides() = 0;
+
   DOCUMENT(R"(Reload the shader debug information for all shaders in the capture.
 )");
   virtual void ReloadShaderDebugInformation() = 0;

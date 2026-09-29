@@ -142,6 +142,18 @@ public:
     m_WARP = warp;
   }
   bool IsRemoteProxy() { return m_Proxy; }
+  rdcstr SetReplayConstantOverrides(const rdcarray<ReplayConstantOverride> &overrides) override;
+  rdcstr ValidateReplayConstants(const rdcarray<ReplayConstantOverride> &overrides);
+  rdcstr SetReplayOverrides(const rdcarray<ReplayConstantOverride> &constants,
+                           const rdcarray<ReplayPassOverride> &passes) override;
+  rdcstr GetReplayOverrideStats() override;
+  rdcstr SetReplayPassOverrides(const rdcarray<ReplayPassOverride> &overrides) override;
+  rdcstr GetReplayOverrideError() override { return m_ReplayOverrideError; }
+  bool IsReplayEventSkipped(uint32_t eventId) const;
+  void BeginReplayOverrideEvent(uint32_t eventId, D3D11Chunk chunk);
+  void EndReplayOverrideEvent(uint32_t eventId);
+  void ResetReplayOverrides();
+  void ReleaseReplayOverrides();
   void Shutdown();
 
   RDResult FatalErrorCheck();
@@ -311,6 +323,40 @@ public:
   bool IsRenderOutput(ResourceId id) { return GetRenderOutputSubresource(id).mip != ~0U; }
   void FileChanged() {}
 private:
+  struct OverrideConstants
+  {
+    ShaderStage stage;
+    UINT slot = 0, offset = 0, count = 0;
+    ID3D11Buffer *original = NULL, *scratch = NULL, *patched = NULL;
+  };
+  struct OverrideColour
+  {
+    uint32_t rule = 0;
+    ReplayColourMapping mapping;
+    ID3D11Texture2D *snapshot = NULL, *target = NULL;
+    ID3D11ShaderResourceView *srv = NULL;
+    ID3D11RenderTargetView *rtv = NULL;
+    bool ready = false, done = false, directCopy = false;
+  };
+  rdcarray<ReplayConstantOverride> m_ConstantOverrides;
+  typedef std::map<UINT, rdcarray<uint32_t>> OverrideSlots;
+  std::map<std::pair<ShaderStage, ResourceId>, OverrideSlots> m_OverrideIndex;
+  rdcarray<uint32_t> m_AllOverrideIndices;
+  // Diagnostic comparison path, selected only by the benchmark environment variable.
+  bool m_OverrideLegacy = false;
+  uint64_t m_OverrideComparisons = 0, m_OverrideCopyBytes = 0, m_OverrideCopies = 0;
+  uint64_t m_OverrideAllocations = 0, m_OverrideIndexBuilds = 0;
+  rdcarray<ReplayPassOverride> m_PassOverrides;
+  rdcarray<OverrideConstants> m_OverrideConstants;
+  rdcarray<OverrideColour> m_OverrideColours;
+  ID3D11VertexShader *m_OverrideVS = NULL;
+  ID3D11PixelShader *m_OverridePS = NULL;
+  ID3D11SamplerState *m_OverrideSampler = NULL;
+  ID3D11RasterizerState *m_OverrideRaster = NULL;
+  rdcstr m_ReplayOverrideError;
+  void RestoreOverrideConstants();
+  void ReleaseOverrideColours(rdcarray<OverrideColour> &colours);
+  rdcstr CreateOverrideBlit();
   bool m_WARP;
   bool m_Proxy;
 

@@ -1,0 +1,2 @@
+# Keep the verified sidecar bytes unchanged on checkout as well as in Git blobs.
+endfield/*.json -text

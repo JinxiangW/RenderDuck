@@ -743,6 +743,13 @@ QWidget.
 )");
   virtual ResourceId GetCurrentResource() = 0;
 
+  DOCUMENT("Return the free-camera state as JSON, including support, active/pending status, matrices and configured fields. Call on the UI thread.");
+  virtual rdcstr GetReplayCameraState() = 0;
+  DOCUMENT("Configure the session free camera from a JSON object with view/projection (16 row-ordered mathematical values), fields, speed, forward, enabled and show. Returns an empty string when queued, otherwise a validation error. Inspect GetReplayCameraState until busy and pending_update are false for completion. Call on the UI thread.");
+  virtual rdcstr ConfigureReplayCamera(const rdcstr &configuration) = 0;
+  DOCUMENT("Reset the free camera and queue original replay. Retains the field configuration. Call on the UI thread.");
+  virtual void ResetReplayCamera() = 0;
+
   DOCUMENT(R"(Return which subresource is currently selected for viewing.
 
 :return: The subresource currently selected.

@@ -154,4 +154,8 @@
         <file>bookmark_blue.png</file>
         <file>bookmark_blue@2x.png</file>
     </qresource>
+    <qresource prefix="/freecamera">
+        <file>freecamera_common.py</file>
+        <file>freecamera_recipe.py</file>
+    </qresource>
 </RCC>

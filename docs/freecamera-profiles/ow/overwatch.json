@@ -1,0 +1,62 @@
+{
+  "version": 1,
+  "name": "Overwatch D3D11 verified camera layout",
+  "row_major": true,
+  "row_vector": true,
+  "forward": "+Z",
+  "camera": {
+    "view": {
+      "slot": 9,
+      "offset": 64
+    },
+    "inverse_view": {
+      "slot": 9,
+      "offset": 128
+    },
+    "projection": {
+      "slot": 9,
+      "offset": 320
+    }
+  },
+  "layouts": [
+    {
+      "slot": 9,
+      "stages": [
+        "VS",
+        "HS",
+        "DS",
+        "GS",
+        "PS",
+        "CS"
+      ],
+      "fields": [
+        {
+          "semantic": "View",
+          "offset": 64
+        },
+        {
+          "semantic": "InverseView",
+          "offset": 128
+        }
+      ]
+    },
+    {
+      "slot": 7,
+      "stages": [
+        "VS"
+      ],
+      "fields": [
+        {
+          "semantic": "ModelView",
+          "offset": 0,
+          "model_offset": 192
+        }
+      ]
+    }
+  ],
+  "unresolved": [
+    "Only the verified View, InverseView and per-object ModelView are covered. Other camera-dependent/history matrices are not yet classified.",
+    "Packed projection constants are preserved. No automatic TAA or pass bypass is applied."
+  ],
+  "world_up": "+Y"
+}

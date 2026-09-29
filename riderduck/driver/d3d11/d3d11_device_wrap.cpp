@@ -1398,6 +1398,9 @@ bool WrappedID3D11Device::Serialise_CreateVertexShader(SerialiserType &ser,
 
   SERIALISE_CHECK_READ_ERRORS();
 
+  D3D11Metadata::Shader(IsReplayingAndReading() ? "deserialize" : "serialise_input",
+                        pShader, pShaderBytecode, (size_t)BytecodeLength);
+
   if(IsReplayingAndReading())
   {
     ID3D11VertexShader *ret;
@@ -1481,6 +1484,7 @@ HRESULT WrappedID3D11Device::CreateVertexShader(const void *pShaderBytecode, SIZ
 
       USE_SCRATCH_SERIALISER();
       SCOPED_SERIALISE_CHUNK(D3D11Chunk::CreateVertexShader);
+      D3D11Metadata::Shader("create_input", GetIDForDeviceChild(wrapped), pShaderBytecode, BytecodeLength);
       Serialise_CreateVertexShader(GET_SERIALISER, pShaderBytecode, BytecodeLength, pClassLinkage,
                                    &wrapped);
 
@@ -1528,6 +1532,9 @@ bool WrappedID3D11Device::Serialise_CreateGeometryShader(SerialiserType &ser,
       .TypedAs("ID3D11GeometryShader *"_lit);
 
   SERIALISE_CHECK_READ_ERRORS();
+
+  D3D11Metadata::Shader(IsReplayingAndReading() ? "deserialize" : "serialise_input",
+                        pShader, pShaderBytecode, (size_t)BytecodeLength);
 
   if(IsReplayingAndReading())
   {
@@ -1612,6 +1619,7 @@ HRESULT WrappedID3D11Device::CreateGeometryShader(const void *pShaderBytecode, S
 
       USE_SCRATCH_SERIALISER();
       SCOPED_SERIALISE_CHUNK(D3D11Chunk::CreateGeometryShader);
+      D3D11Metadata::Shader("create_input", GetIDForDeviceChild(wrapped), pShaderBytecode, BytecodeLength);
       Serialise_CreateGeometryShader(GET_SERIALISER, pShaderBytecode, BytecodeLength, pClassLinkage,
                                      &wrapped);
 
@@ -1667,6 +1675,9 @@ bool WrappedID3D11Device::Serialise_CreateGeometryShaderWithStreamOutput(
       .TypedAs("ID3D11GeometryShader *"_lit);
 
   SERIALISE_CHECK_READ_ERRORS();
+
+  D3D11Metadata::Shader(IsReplayingAndReading() ? "deserialize" : "serialise_input",
+                        pShader, pShaderBytecode, (size_t)BytecodeLength);
 
   if(IsReplayingAndReading())
   {
@@ -1828,6 +1839,7 @@ HRESULT WrappedID3D11Device::CreateGeometryShaderWithStreamOutput(
 
       USE_SCRATCH_SERIALISER();
       SCOPED_SERIALISE_CHUNK(D3D11Chunk::CreateGeometryShaderWithStreamOutput);
+      D3D11Metadata::Shader("create_input", GetIDForDeviceChild(wrapped), pShaderBytecode, BytecodeLength);
       Serialise_CreateGeometryShaderWithStreamOutput(
           GET_SERIALISER, pShaderBytecode, BytecodeLength, pSODeclaration, NumEntries,
           pBufferStrides, NumStrides, RasterizedStream, pClassLinkage, &wrapped);
@@ -1879,6 +1891,9 @@ bool WrappedID3D11Device::Serialise_CreatePixelShader(SerialiserType &ser,
       .TypedAs("ID3D11PixelShader *"_lit);
 
   SERIALISE_CHECK_READ_ERRORS();
+
+  D3D11Metadata::Shader(IsReplayingAndReading() ? "deserialize" : "serialise_input",
+                        pShader, pShaderBytecode, (size_t)BytecodeLength);
 
   if(IsReplayingAndReading())
   {
@@ -1962,6 +1977,7 @@ HRESULT WrappedID3D11Device::CreatePixelShader(const void *pShaderBytecode, SIZE
 
       USE_SCRATCH_SERIALISER();
       SCOPED_SERIALISE_CHUNK(D3D11Chunk::CreatePixelShader);
+      D3D11Metadata::Shader("create_input", GetIDForDeviceChild(wrapped), pShaderBytecode, BytecodeLength);
       Serialise_CreatePixelShader(GET_SERIALISER, pShaderBytecode, BytecodeLength, pClassLinkage,
                                   &wrapped);
 
@@ -2009,6 +2025,9 @@ bool WrappedID3D11Device::Serialise_CreateHullShader(SerialiserType &ser, const 
       .TypedAs("ID3D11HullShader *"_lit);
 
   SERIALISE_CHECK_READ_ERRORS();
+
+  D3D11Metadata::Shader(IsReplayingAndReading() ? "deserialize" : "serialise_input",
+                        pShader, pShaderBytecode, (size_t)BytecodeLength);
 
   if(IsReplayingAndReading())
   {
@@ -2092,6 +2111,7 @@ HRESULT WrappedID3D11Device::CreateHullShader(const void *pShaderBytecode, SIZE_
 
       USE_SCRATCH_SERIALISER();
       SCOPED_SERIALISE_CHUNK(D3D11Chunk::CreateHullShader);
+      D3D11Metadata::Shader("create_input", GetIDForDeviceChild(wrapped), pShaderBytecode, BytecodeLength);
       Serialise_CreateHullShader(GET_SERIALISER, pShaderBytecode, BytecodeLength, pClassLinkage,
                                  &wrapped);
 
@@ -2140,6 +2160,9 @@ bool WrappedID3D11Device::Serialise_CreateDomainShader(SerialiserType &ser,
       .TypedAs("ID3D11DomainShader *"_lit);
 
   SERIALISE_CHECK_READ_ERRORS();
+
+  D3D11Metadata::Shader(IsReplayingAndReading() ? "deserialize" : "serialise_input",
+                        pShader, pShaderBytecode, (size_t)BytecodeLength);
 
   if(IsReplayingAndReading())
   {
@@ -2224,6 +2247,7 @@ HRESULT WrappedID3D11Device::CreateDomainShader(const void *pShaderBytecode, SIZ
 
       USE_SCRATCH_SERIALISER();
       SCOPED_SERIALISE_CHUNK(D3D11Chunk::CreateDomainShader);
+      D3D11Metadata::Shader("create_input", GetIDForDeviceChild(wrapped), pShaderBytecode, BytecodeLength);
       Serialise_CreateDomainShader(GET_SERIALISER, pShaderBytecode, BytecodeLength, pClassLinkage,
                                    &wrapped);
 
@@ -2273,6 +2297,9 @@ bool WrappedID3D11Device::Serialise_CreateComputeShader(SerialiserType &ser,
       .TypedAs("ID3D11ComputeShader *"_lit);
 
   SERIALISE_CHECK_READ_ERRORS();
+
+  D3D11Metadata::Shader(IsReplayingAndReading() ? "deserialize" : "serialise_input",
+                        pShader, pShaderBytecode, (size_t)BytecodeLength);
 
   if(IsReplayingAndReading())
   {
@@ -2357,6 +2384,7 @@ HRESULT WrappedID3D11Device::CreateComputeShader(const void *pShaderBytecode, SI
 
       USE_SCRATCH_SERIALISER();
       SCOPED_SERIALISE_CHUNK(D3D11Chunk::CreateComputeShader);
+      D3D11Metadata::Shader("create_input", GetIDForDeviceChild(wrapped), pShaderBytecode, BytecodeLength);
       Serialise_CreateComputeShader(GET_SERIALISER, pShaderBytecode, BytecodeLength, pClassLinkage,
                                     &wrapped);
 

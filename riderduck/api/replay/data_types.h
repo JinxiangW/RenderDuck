@@ -2881,3 +2881,107 @@ struct DebugPixelInputs
 };
 
 DECLARE_REFLECTION_STRUCT(DebugPixelInputs);
+
+DOCUMENT("A session-only constant-buffer patch, applied before matching replay actions.");
+struct ReplayConstantOverride
+{
+  DOCUMENT("Inclusive first and last event IDs.");
+  uint32_t firstEvent = 1, lastEvent = ~0U;
+  DOCUMENT("The shader that must be bound at the selected stage.");
+  ResourceId shader;
+  ShaderStage stage = ShaderStage::Vertex;
+  uint32_t slot = 0;
+  DOCUMENT("Byte offset relative to the bound constant-buffer range, not the whole resource.");
+  uint32_t byteOffset = 0;
+  DOCUMENT("Replacement bytes. Other bytes retain their value at this event.");
+  bytebuf data;
+  bool operator==(const ReplayConstantOverride &o) const
+  {
+    return firstEvent == o.firstEvent && lastEvent == o.lastEvent && shader == o.shader &&
+           stage == o.stage && slot == o.slot && byteOffset == o.byteOffset && data == o.data;
+  }
+  bool operator<(const ReplayConstantOverride &o) const
+  {
+    if(!(firstEvent == o.firstEvent))
+      return firstEvent < o.firstEvent;
+    if(!(lastEvent == o.lastEvent))
+      return lastEvent < o.lastEvent;
+    if(!(shader == o.shader))
+      return shader < o.shader;
+    if(!(stage == o.stage))
+      return stage < o.stage;
+    if(!(slot == o.slot))
+      return slot < o.slot;
+    if(!(byteOffset == o.byteOffset))
+      return byteOffset < o.byteOffset;
+    if(!(data == o.data))
+      return data < o.data;
+    return false;
+  }
+};
+DECLARE_REFLECTION_STRUCT(ReplayConstantOverride);
+
+DOCUMENT("A colour subresource to snapshot at pass entry and forward at pass exit.");
+struct ReplayColourMapping
+{
+  ResourceId source, destination;
+  uint32_t sourceMip = 0, sourceSlice = 0;
+  uint32_t destinationMip = 0, destinationSlice = 0;
+  DOCUMENT("D3D11 DXGI_FORMAT view values. Zero uses the resource format; typeless needs a view.");
+  uint32_t sourceFormat = 0, destinationFormat = 0;
+  bool operator==(const ReplayColourMapping &o) const
+  {
+    return source == o.source && destination == o.destination && sourceMip == o.sourceMip &&
+           sourceSlice == o.sourceSlice && destinationMip == o.destinationMip &&
+           destinationSlice == o.destinationSlice && sourceFormat == o.sourceFormat &&
+           destinationFormat == o.destinationFormat;
+  }
+  bool operator<(const ReplayColourMapping &o) const
+  {
+    if(!(source == o.source))
+      return source < o.source;
+    if(!(destination == o.destination))
+      return destination < o.destination;
+    if(!(sourceMip == o.sourceMip))
+      return sourceMip < o.sourceMip;
+    if(!(sourceSlice == o.sourceSlice))
+      return sourceSlice < o.sourceSlice;
+    if(!(destinationMip == o.destinationMip))
+      return destinationMip < o.destinationMip;
+    if(!(destinationSlice == o.destinationSlice))
+      return destinationSlice < o.destinationSlice;
+    if(!(sourceFormat == o.sourceFormat))
+      return sourceFormat < o.sourceFormat;
+    if(!(destinationFormat == o.destinationFormat))
+      return destinationFormat < o.destinationFormat;
+    return false;
+  }
+};
+DECLARE_REFLECTION_STRUCT(ReplayColourMapping);
+
+DOCUMENT("Disable GPU actions in an inclusive event range; optionally forward colour outputs.");
+struct ReplayPassOverride
+{
+  uint32_t firstEvent = 1, lastEvent = 1;
+  DOCUMENT("False skips actions; true additionally snapshots and forwards the colour mappings.");
+  bool bypass = false;
+  rdcarray<ReplayColourMapping> colours;
+  bool operator==(const ReplayPassOverride &o) const
+  {
+    return firstEvent == o.firstEvent && lastEvent == o.lastEvent && bypass == o.bypass &&
+           colours == o.colours;
+  }
+  bool operator<(const ReplayPassOverride &o) const
+  {
+    if(!(firstEvent == o.firstEvent))
+      return firstEvent < o.firstEvent;
+    if(!(lastEvent == o.lastEvent))
+      return lastEvent < o.lastEvent;
+    if(!(bypass == o.bypass))
+      return bypass < o.bypass;
+    if(!(colours == o.colours))
+      return colours < o.colours;
+    return false;
+  }
+};
+DECLARE_REFLECTION_STRUCT(ReplayPassOverride);

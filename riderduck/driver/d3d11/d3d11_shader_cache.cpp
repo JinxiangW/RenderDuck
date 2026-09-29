@@ -172,6 +172,7 @@ rdcstr D3D11ShaderCache::GetShaderBlob(const char *source, const char *entry,
 
   uint32_t flags = compileFlags & ~D3DCOMPILE_NO_PRESHADER;
 
+  D3D11Metadata::Suppress metadataSuppress;
   hr = compileFunc(source, strlen(source), entry, NULL, &includer, entry, profile, flags, 0,
                    &byteBlob, &errBlob);
 
@@ -214,6 +215,7 @@ ID3D11VertexShader *D3D11ShaderCache::MakeVShader(const char *source, const char
                                                   D3D11_INPUT_ELEMENT_DESC *inputs,
                                                   ID3D11InputLayout **ret, rdcarray<byte> *blob)
 {
+  D3D11Metadata::Suppress metadataSuppress;
   ID3DBlob *byteBlob = NULL;
 
   if(GetShaderBlob(source, entry, m_CompileFlags, {}, profile, &byteBlob) != "")
@@ -262,6 +264,7 @@ ID3D11VertexShader *D3D11ShaderCache::MakeVShader(const char *source, const char
 ID3D11GeometryShader *D3D11ShaderCache::MakeGShader(const char *source, const char *entry,
                                                     const char *profile)
 {
+  D3D11Metadata::Suppress metadataSuppress;
   ID3DBlob *byteBlob = NULL;
 
   if(GetShaderBlob(source, entry, m_CompileFlags, {}, profile, &byteBlob) != "")
@@ -290,6 +293,7 @@ ID3D11GeometryShader *D3D11ShaderCache::MakeGShader(const char *source, const ch
 ID3D11PixelShader *D3D11ShaderCache::MakePShader(const char *source, const char *entry,
                                                  const char *profile)
 {
+  D3D11Metadata::Suppress metadataSuppress;
   ID3DBlob *byteBlob = NULL;
 
   if(GetShaderBlob(source, entry, m_CompileFlags, {}, profile, &byteBlob) != "")
@@ -318,6 +322,7 @@ ID3D11PixelShader *D3D11ShaderCache::MakePShader(const char *source, const char 
 ID3D11ComputeShader *D3D11ShaderCache::MakeCShader(const char *source, const char *entry,
                                                    const char *profile)
 {
+  D3D11Metadata::Suppress metadataSuppress;
   ID3DBlob *byteBlob = NULL;
 
   if(GetShaderBlob(source, entry, m_CompileFlags, {}, profile, &byteBlob) != "")

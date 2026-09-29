@@ -31,12 +31,14 @@
 #include <QFontDatabase>
 #include <QItemDelegate>
 #include <QJsonDocument>
+#include <QJsonObject>
 #include <QMenu>
 #include <QPainter>
 #include <QPointer>
 #include <QStyledItemDelegate>
 #include "Code/QRDUtils.h"
 #include "Code/Resources.h"
+#include "Code/ReplayOverrides.h"
 #include "Dialogs/TextureSaveDialog.h"
 #include "Widgets/Extended/RDHeaderView.h"
 #include "Widgets/ResourcePreview.h"
@@ -607,6 +609,14 @@ TextureViewer::TextureViewer(ICaptureContext &ctx, QWidget *parent)
   flow2->addWidget(ui->zoomToolbar);
   flow2->addWidget(ui->overlayToolbar);
   flow2->addWidget(ui->rangeToolbar);
+  ReplayOverrides *replayOverrides = new ReplayOverrides(m_Ctx, this, ui->render, [this](const QJsonObject &config) {
+    for(const TextureDescription &texture : m_Ctx.GetTextures())
+      if(ToQStr(texture.resourceId) == config[lit("output_rid")].toString())
+        ViewTexture(texture.resourceId, CompType::Typeless, false);
+    if(config.contains(lit("flip_y")))
+      ui->flip_y->setChecked(config[lit("flip_y")].toBool());
+  });
+  flow2->addWidget(replayOverrides->Toolbar());
 
   vertical->addWidget(flow1widget);
   vertical->addWidget(flow2widget);
@@ -2166,6 +2176,44 @@ void TextureViewer::ViewFollowedResource(FollowType followType, ShaderStage stag
   }
 
   qWarning() << "Couldn't find matching bound resource";
+}
+
+rdcstr TextureViewer::GetReplayCameraState()
+{
+  QJsonObject state =
+      QJsonDocument::fromJson(QString(ReplayOverrides::Find(m_Ctx)->CameraState()).toUtf8()).object();
+  state[lit("flip_y")] = ui->flip_y->isChecked();
+  state[lit("output_rid")] = ToQStr(GetCurrentResource());
+  return QString::fromUtf8(QJsonDocument(state).toJson(QJsonDocument::Compact));
+}
+
+rdcstr TextureViewer::ConfigureReplayCamera(const rdcstr &configuration)
+{
+  QJsonObject config = QJsonDocument::fromJson(QString(configuration).toUtf8()).object();
+  if(config.contains(lit("flip_y")) && !config[lit("flip_y")].isBool())
+    return "flip_y must be a boolean.";
+  ResourceId output;
+  if(config.contains(lit("output_rid")))
+  {
+    for(const TextureDescription &texture : m_Ctx.GetTextures())
+      if(ToQStr(texture.resourceId) == config[lit("output_rid")].toString())
+        output = texture.resourceId;
+    if(output == ResourceId())
+      return "output_rid is not a texture in this capture.";
+  }
+  rdcstr error = ReplayOverrides::Find(m_Ctx)->ConfigureCamera(configuration);
+  if(!error.empty())
+    return error;
+  if(!config[lit("enabled")].toBool(true) && output != ResourceId())
+    ViewTexture(output, CompType::Typeless, false);
+  if(!config[lit("enabled")].toBool(true) && config.contains(lit("flip_y")))
+    ui->flip_y->setChecked(config[lit("flip_y")].toBool());
+  return {};
+}
+
+void TextureViewer::ResetReplayCamera()
+{
+  ReplayOverrides::Find(m_Ctx)->ResetCamera();
 }
 
 ResourceId TextureViewer::GetCurrentResource()

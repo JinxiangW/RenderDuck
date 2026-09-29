@@ -1323,6 +1323,7 @@ bool WrappedID3D11Device::Serialise_CaptureScope(SerialiserType &ser)
 
 RDResult WrappedID3D11Device::ReadLogInitialisation(RDCFile *rdc, bool storeStructuredBuffers)
 {
+  D3D11Metadata::BeginReplay();
   int sectionIdx = rdc->SectionIndex(SectionType::FrameCapture);
 
   if(sectionIdx < 0)
@@ -1569,6 +1570,8 @@ RDResult WrappedID3D11Device::ReadLogInitialisation(RDCFile *rdc, bool storeStru
     RETURN_ERROR_RESULT(ResultCode::DeviceLost, "Device lost during load: %s",
                         ToStr(m_pDevice->GetDeviceRemovedReason()).c_str());
 
+  if(!IsStructuredExporting(m_State))
+    D3D11Metadata::WriteReplay(rdc->GetFilename(), this);
   return ResultCode::Succeeded;
 }
 
@@ -1588,6 +1591,7 @@ void WrappedID3D11Device::ReplayLog(uint32_t startEventID, uint32_t endEventID,
     RIDERDUCK_PROFILEREGION("ApplyInitialContents");
     D3D11MarkerRegion apply("!!!!RiderDuck Internal: ApplyInitialContents");
     GetResourceManager()->ApplyInitialContents();
+    GetReplay()->ResetReplayOverrides();
   }
 
   m_State = CaptureState::ActiveReplaying;
@@ -2360,7 +2364,9 @@ bool WrappedID3D11Device::EndFrameCapture(DeviceOwnedWindow devWnd)
     RDCLOG("Captured D3D11 frame with %f MB capture section in %f seconds",
            double(captureSectionSize) / (1024.0 * 1024.0), m_CaptureTimer.GetMilliseconds() / 1000.0);
 
+    const rdcstr metadataCapturePath = rdc ? rdc->GetFilename() : rdcstr();
     RiderDuck::Inst().FinishCaptureWriting(rdc, m_CapturedFrames.back().frameNumber);
+    D3D11Metadata::WriteCapture(metadataCapturePath);
 
     m_State = CaptureState::BackgroundCapturing;
 

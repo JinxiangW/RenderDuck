@@ -78,6 +78,7 @@ public:
   const RDResult &Error() const { return m_Error; }
   RDCDriver GetDriver() const { return m_Driver; }
   const rdcstr &GetDriverName() const { return m_DriverName; }
+  const rdcstr &GetFilename() const { return m_Filename; }
   uint64_t GetMachineIdent() const { return m_MachineIdent; }
   uint64_t GetTimestampBase() const { return m_TimeBase; }
   double GetTimestampFrequency() const { return m_TimeFrequency; }

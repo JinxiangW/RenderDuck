@@ -255,6 +255,21 @@ public:
 class IReplayDriver : public IRemoteDriver
 {
 public:
+  virtual rdcstr SetReplayOverrides(const rdcarray<ReplayConstantOverride> &,
+                                    const rdcarray<ReplayPassOverride> &)
+  {
+    return "Replay overrides require a local D3D11 replay device.";
+  }
+  virtual rdcstr SetReplayConstantOverrides(const rdcarray<ReplayConstantOverride> &)
+  {
+    return "Replay overrides require a local D3D11 replay device.";
+  }
+  virtual rdcstr SetReplayPassOverrides(const rdcarray<ReplayPassOverride> &)
+  {
+    return "Replay overrides require a local D3D11 replay device.";
+  }
+  virtual rdcstr GetReplayOverrideError() { return {}; }
+  virtual rdcstr GetReplayOverrideStats() { return "{}"; }
   virtual bool IsRemoteProxy() = 0;
 
   virtual IReplayDriver *MakeDummyDriver() = 0;

@@ -1594,6 +1594,20 @@ void CaptureContext::ExportCapture(const CaptureFileFormat &fmt, const rdcstr &e
   }
 }
 
+void CaptureContext::CameraReplayEventReady(uint32_t eventId, const D3D11Pipe::State *d3d11,
+                                            const PipeState *pipeline)
+{
+  if(!IsCaptureLoaded())
+    return;
+  const bool selectedChanged = m_SelectedEventID != eventId;
+  const bool eventChanged = m_EventID != eventId;
+  m_SelectedEventID = m_EventID = eventId;
+  m_CurD3D11PipelineState = d3d11;
+  m_CurPipelineState = pipeline;
+  if(selectedChanged || eventChanged)
+    RefreshUIStatus({}, selectedChanged, eventChanged);
+}
+
 void CaptureContext::SetEventID(const rdcarray<ICaptureViewer *> &exclude, uint32_t selectedEventID,
                                 uint32_t eventId, bool force)
 {

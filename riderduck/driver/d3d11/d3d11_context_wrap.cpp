@@ -3960,6 +3960,9 @@ bool WrappedID3D11DeviceContext::Serialise_DrawIndexedInstanced(
 
   SERIALISE_CHECK_READ_ERRORS();
 
+  if(IsActiveReplaying(m_State) && m_pDevice->GetReplay()->IsReplayEventSkipped(m_CurEventID))
+    return true;
+
   if(IsReplayingAndReading())
   {
     m_pRealContext->DrawIndexedInstanced(IndexCountPerInstance, InstanceCount, StartIndexLocation,
@@ -4037,6 +4040,9 @@ bool WrappedID3D11DeviceContext::Serialise_DrawInstanced(SerialiserType &ser,
 
   SERIALISE_CHECK_READ_ERRORS();
 
+  if(IsActiveReplaying(m_State) && m_pDevice->GetReplay()->IsReplayEventSkipped(m_CurEventID))
+    return true;
+
   if(IsReplayingAndReading())
   {
     m_pRealContext->DrawInstanced(VertexCountPerInstance, InstanceCount, StartVertexLocation,
@@ -4109,6 +4115,9 @@ bool WrappedID3D11DeviceContext::Serialise_DrawIndexed(SerialiserType &ser, UINT
 
   SERIALISE_CHECK_READ_ERRORS();
 
+  if(IsActiveReplaying(m_State) && m_pDevice->GetReplay()->IsReplayEventSkipped(m_CurEventID))
+    return true;
+
   if(IsReplayingAndReading())
   {
     m_pRealContext->DrawIndexed(IndexCount, StartIndexLocation, BaseVertexLocation);
@@ -4175,6 +4184,9 @@ bool WrappedID3D11DeviceContext::Serialise_Draw(SerialiserType &ser, UINT Vertex
 
   SERIALISE_CHECK_READ_ERRORS();
 
+  if(IsActiveReplaying(m_State) && m_pDevice->GetReplay()->IsReplayEventSkipped(m_CurEventID))
+    return true;
+
   if(IsReplayingAndReading())
   {
     m_pRealContext->Draw(VertexCount, StartVertexLocation);
@@ -4234,6 +4246,9 @@ bool WrappedID3D11DeviceContext::Serialise_DrawAuto(SerialiserType &ser)
   Serialise_DebugMessages(GET_SERIALISER);
 
   SERIALISE_CHECK_READ_ERRORS();
+
+  if(IsActiveReplaying(m_State) && m_pDevice->GetReplay()->IsReplayEventSkipped(m_CurEventID))
+    return true;
 
   uint64_t numVertsToDraw = 0;
 
@@ -4387,6 +4402,9 @@ bool WrappedID3D11DeviceContext::Serialise_DrawIndexedInstancedIndirect(Serialis
 
   SERIALISE_CHECK_READ_ERRORS();
 
+  if(IsActiveReplaying(m_State) && m_pDevice->GetReplay()->IsReplayEventSkipped(m_CurEventID))
+    return true;
+
   if(IsReplayingAndReading())
   {
     if(pBufferForArgs)
@@ -4521,6 +4539,9 @@ bool WrappedID3D11DeviceContext::Serialise_DrawInstancedIndirect(SerialiserType 
   Serialise_DebugMessages(GET_SERIALISER);
 
   SERIALISE_CHECK_READ_ERRORS();
+
+  if(IsActiveReplaying(m_State) && m_pDevice->GetReplay()->IsReplayEventSkipped(m_CurEventID))
+    return true;
 
   if(IsReplayingAndReading())
   {
@@ -5154,6 +5175,9 @@ bool WrappedID3D11DeviceContext::Serialise_Dispatch(SerialiserType &ser, UINT Th
 
   SERIALISE_CHECK_READ_ERRORS();
 
+  if(IsActiveReplaying(m_State) && m_pDevice->GetReplay()->IsReplayEventSkipped(m_CurEventID))
+    return true;
+
   if(IsReplayingAndReading())
   {
     m_pRealContext->Dispatch(ThreadGroupCountX, ThreadGroupCountY, ThreadGroupCountZ);
@@ -5233,6 +5257,9 @@ bool WrappedID3D11DeviceContext::Serialise_DispatchIndirect(SerialiserType &ser,
   Serialise_DebugMessages(GET_SERIALISER);
 
   SERIALISE_CHECK_READ_ERRORS();
+
+  if(IsActiveReplaying(m_State) && m_pDevice->GetReplay()->IsReplayEventSkipped(m_CurEventID))
+    return true;
 
   if(IsReplayingAndReading())
   {
@@ -5782,6 +5809,9 @@ bool WrappedID3D11DeviceContext::Serialise_CopySubresourceRegion(
 
   SERIALISE_CHECK_READ_ERRORS();
 
+  if(IsActiveReplaying(m_State) && m_pDevice->GetReplay()->IsReplayEventSkipped(m_CurEventID))
+    return true;
+
   if(IsReplayingAndReading())
   {
     if(pDstResource && pSrcResource)
@@ -5938,6 +5968,9 @@ bool WrappedID3D11DeviceContext::Serialise_CopyResource(SerialiserType &ser,
   Serialise_DebugMessages(GET_SERIALISER);
 
   SERIALISE_CHECK_READ_ERRORS();
+
+  if(IsActiveReplaying(m_State) && m_pDevice->GetReplay()->IsReplayEventSkipped(m_CurEventID))
+    return true;
 
   if(IsReplayingAndReading())
   {
@@ -6377,6 +6410,9 @@ bool WrappedID3D11DeviceContext::Serialise_CopyStructureCount(SerialiserType &se
 
   SERIALISE_CHECK_READ_ERRORS();
 
+  if(IsActiveReplaying(m_State) && m_pDevice->GetReplay()->IsReplayEventSkipped(m_CurEventID))
+    return true;
+
   if(IsReplayingAndReading() && pDstBuffer && pSrcView)
   {
     m_pRealContext->CopyStructureCount(UNWRAP(WrappedID3D11Buffer, pDstBuffer), DstAlignedByteOffset,
@@ -6484,6 +6520,9 @@ bool WrappedID3D11DeviceContext::Serialise_ResolveSubresource(SerialiserType &se
 
   SERIALISE_CHECK_READ_ERRORS();
 
+  if(IsActiveReplaying(m_State) && m_pDevice->GetReplay()->IsReplayEventSkipped(m_CurEventID))
+    return true;
+
   if(IsReplayingAndReading())
   {
     if(pDstResource && pSrcResource)
@@ -6579,6 +6618,9 @@ bool WrappedID3D11DeviceContext::Serialise_GenerateMips(SerialiserType &ser,
   Serialise_DebugMessages(GET_SERIALISER);
 
   SERIALISE_CHECK_READ_ERRORS();
+
+  if(IsActiveReplaying(m_State) && m_pDevice->GetReplay()->IsReplayEventSkipped(m_CurEventID))
+    return true;
 
   if(IsReplayingAndReading())
   {
@@ -6735,6 +6777,9 @@ bool WrappedID3D11DeviceContext::Serialise_ClearRenderTargetView(
 
   SERIALISE_CHECK_READ_ERRORS();
 
+  if(IsActiveReplaying(m_State) && m_pDevice->GetReplay()->IsReplayEventSkipped(m_CurEventID))
+    return true;
+
   if(IsReplayingAndReading())
   {
     if(pRenderTargetView)
@@ -6816,6 +6861,9 @@ bool WrappedID3D11DeviceContext::Serialise_ClearUnorderedAccessViewUint(
 
   SERIALISE_CHECK_READ_ERRORS();
 
+  if(IsActiveReplaying(m_State) && m_pDevice->GetReplay()->IsReplayEventSkipped(m_CurEventID))
+    return true;
+
   if(IsReplayingAndReading())
   {
     if(pUnorderedAccessView)
@@ -6893,6 +6941,9 @@ bool WrappedID3D11DeviceContext::Serialise_ClearUnorderedAccessViewFloat(
   Serialise_DebugMessages(GET_SERIALISER);
 
   SERIALISE_CHECK_READ_ERRORS();
+
+  if(IsActiveReplaying(m_State) && m_pDevice->GetReplay()->IsReplayEventSkipped(m_CurEventID))
+    return true;
 
   if(IsReplayingAndReading())
   {
@@ -6978,6 +7029,9 @@ bool WrappedID3D11DeviceContext::Serialise_ClearDepthStencilView(
   Serialise_DebugMessages(GET_SERIALISER);
 
   SERIALISE_CHECK_READ_ERRORS();
+
+  if(IsActiveReplaying(m_State) && m_pDevice->GetReplay()->IsReplayEventSkipped(m_CurEventID))
+    return true;
 
   if(IsReplayingAndReading())
   {

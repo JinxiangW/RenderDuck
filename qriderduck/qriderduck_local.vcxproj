@@ -798,6 +798,7 @@
     <ClCompile Include="Windows\StatisticsViewer.cpp" />
     <ClCompile Include="Windows\TimelineBar.cpp" />
     <ClCompile Include="Windows\TextureViewer.cpp" />
+    <ClCompile Include="Code\ReplayOverrides.cpp" />
     <ClCompile Include="3rdparty\toolwindowmanager\ToolWindowManager.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <ForcedIncludeFiles>
@@ -1768,7 +1769,7 @@
     <None Include="Code\pyriderduck\pyconversion.i" />
     <None Include="Code\pyriderduck\cosmetics.i" />
     <CustomBuild Include="Resources\resources.qrc">
-      <AdditionalInputs>Resources\resources.qrc;$(QtBinDir)\rcc.exe;%(AdditionalInputs)</AdditionalInputs>
+      <AdditionalInputs>Resources\resources.qrc;Resources\freecamera_common.py;Resources\freecamera_recipe.py;$(QtBinDir)\rcc.exe;%(AdditionalInputs)</AdditionalInputs>
       <Command>"$(QtBinDir)\rcc.exe" -name resources Resources\resources.qrc -o "$(IntDir)generated\qrc_resources.cpp"</Command>
       <Message>RCC resources.qrc</Message>
       <Outputs>$(IntDir)generated\qrc_resources.cpp</Outputs>

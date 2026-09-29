@@ -139,6 +139,9 @@ public:
   void ViewFollowedResource(FollowType followType, ShaderStage stage, int32_t index,
                             int32_t arrayElement) override;
   ResourceId GetCurrentResource() override;
+  rdcstr GetReplayCameraState() override;
+  rdcstr ConfigureReplayCamera(const rdcstr &configuration) override;
+  void ResetReplayCamera() override;
 
   Subresource GetSelectedSubresource() override;
   void SetSelectedSubresource(Subresource sub) override;

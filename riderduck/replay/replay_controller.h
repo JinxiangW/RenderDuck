@@ -179,6 +179,16 @@ public:
   void RemoveReplacement(ResourceId id);
   void FreeTargetResource(ResourceId id);
   void ClearReplayCache();
+  rdcstr SetReplayOverrides(const rdcarray<ReplayConstantOverride> &constants,
+                           const rdcarray<ReplayPassOverride> &passes, uint32_t targetEventId = 0);
+  rdcstr SetReplayConstantOverrides(const rdcarray<ReplayConstantOverride> &overrides,
+                                    uint32_t targetEventId = 0);
+  rdcstr GetReplayOverrideStats();
+  rdcstr ClearReplayConstantOverrides();
+  rdcstr SetReplayPassOverrides(const rdcarray<ReplayPassOverride> &overrides);
+  rdcstr ClearReplayPassOverrides();
+  rdcarray<ReplayConstantOverride> m_ReplayConstants;
+  rdcarray<ReplayPassOverride> m_ReplayPasses;
   void ReloadShaderDebugInformation();
 
   FrameDescription GetFrameInfo();
